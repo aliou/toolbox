@@ -1,0 +1,27 @@
+name: Token expiry reminder
+
+on:
+  schedule:
+    # Apr 25, 2026 at 9:00 UTC
+    - cron: "0 9 25 4 *"
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create reminder issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "TAP_GITHUB_TOKEN expires Apr 30" \
+            --body "The fine-grained PAT used to update the Homebrew tap expires on April 30, 2026.
+
+          Regenerate it at https://github.com/settings/tokens?type=beta and update the secret at https://github.com/aliou/toolbox/settings/secrets/actions.
+
+          Required permissions: \`Contents: Read and write\`, \`Pull requests: Read and write\` on \`aliou/homebrew-toolbox\` only.
+
+          After updating, delete this workflow file or update the cron date to match the new expiry."
