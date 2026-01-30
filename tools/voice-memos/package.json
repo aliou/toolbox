@@ -1,5 +1,6 @@
 {
   "name": "@aliou/toolbox-voice-memos",
+  "description": "Browse and export Apple Voice Memos from the command line",
   "version": "0.1.0",
   "type": "module",
   "bin": {

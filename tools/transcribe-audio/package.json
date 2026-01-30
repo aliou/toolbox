@@ -1,5 +1,6 @@
 {
   "name": "@aliou/toolbox-transcribe-audio",
+  "description": "Transcribe audio files using whisper.cpp",
   "version": "0.1.0",
   "type": "module",
   "bin": {
