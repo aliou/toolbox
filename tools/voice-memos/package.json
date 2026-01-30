@@ -1,6 +1,6 @@
 {
   "name": "@aliou/toolbox-voice-memos",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "bin": {
     "voice-memos": "./index.ts"

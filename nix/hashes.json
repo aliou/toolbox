@@ -1,18 +1,18 @@
 {
   "voice-memos": {
-    "version": "0.0.1",
+    "version": "0.1.0",
     "hashes": {
-      "aarch64-darwin": "sha256-CqDB2CGkpEyawxyTPbZGorNcbdgKe5/X2k7AnyM2gWA=",
-      "x86_64-darwin": "sha256-hpEYPF7Q6U2rAPtZbz+1NCuenQvxufGCxjt4Zx/RJgo="
+      "aarch64-darwin": "sha256-oVWWoiKjJwknsITFbiqQsguTzfUhBuLAOfeXOpbbwjg=",
+      "x86_64-darwin": "sha256-diBt4qhV/To3b+CwQzraXh3q2Y6kSw6FxquV8poLEWs="
     }
   },
   "transcribe-audio": {
-    "version": "0.0.1",
+    "version": "0.1.0",
     "hashes": {
-      "aarch64-darwin": "sha256-vpl3iYQw6V6r+gDff9lykGEnnhwzj9EndJtmDNk6I4o=",
-      "x86_64-darwin": "sha256-iEIasTsdkjjNy1ZmKfOVFQTHn/877oR5JS4yobYcEAs=",
-      "aarch64-linux": "sha256-RNk79qjSMiDnAg8HhSb7C00CIagOQ5KVdZgvA/2Gbps=",
-      "x86_64-linux": "sha256-9kzkSvz8OJwY5SFFisHbgjO33YqHlBt7FY+HJF/G0Cc="
+      "aarch64-darwin": "sha256-oQ9Ekfht0ukLvcrneyfCIoCk8nwNw6aKfUKi5mkPpkg=",
+      "x86_64-darwin": "sha256-1id9YTaeOnkvm9mFb9A2Vgdjs/7gwe4jiHiM5q/fmFI=",
+      "aarch64-linux": "sha256-QJZ9BlufvtQp2CxgLAeetgn+yE9AmWuf7pq3/ySutEA=",
+      "x86_64-linux": "sha256-yRJ2yv12zKnt6I8P+r7IbIoD/vZLKaBD6KnTB6ZboH8="
     }
   }
 }
