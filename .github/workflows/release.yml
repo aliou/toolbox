@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check for pending changesets
+        id: check
+        run: |
+          count=$(find .changeset -name '*.md' ! -name 'README.md' 2>/dev/null | wc -l | tr -d ' ')
+          echo "pending=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Version packages
+        if: steps.check.outputs.pending != '0'
+        run: bun changeset version
+
+      - name: Detect bumped tools
+        if: steps.check.outputs.pending != '0'
+        id: bumped
+        run: |
+          bumped=""
+          for tool_dir in tools/*/; do
+            pkg="$tool_dir/package.json"
+            [ -f "$pkg" ] || continue
+
+            binary=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$pkg','utf8')).toolbox?.binary || '')")
+            [ -z "$binary" ] && continue
+
+            if git diff --name-only | grep -q "$(basename "$tool_dir")/package.json"; then
+              version=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$pkg','utf8')).version)")
+              bumped="$bumped $binary@$version"
+            fi
+          done
+
+          bumped=$(echo "$bumped" | xargs)
+          echo "list=$bumped" >> "$GITHUB_OUTPUT"
+          echo "any=$([ -n "$bumped" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "Bumped: $bumped"
+
+      - name: Build binaries
+        if: steps.bumped.outputs.any == 'true'
+        run: |
+          mkdir -p dist
+
+          for tool_dir in tools/*/; do
+            pkg="$tool_dir/package.json"
+            [ -f "$pkg" ] || continue
+
+            binary=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$pkg','utf8')).toolbox?.binary || '')")
+            targets=$(node -e "console.log((JSON.parse(require('fs').readFileSync('$pkg','utf8')).toolbox?.targets || []).join(' '))")
+
+            [ -z "$binary" ] && continue
+
+            for target in $targets; do
+              echo "Building $binary for $target..."
+              bun build "$tool_dir/index.ts" --compile --target="bun-$target" --outfile "dist/$binary-$target"
+            done
+          done
+
+      - name: Update Nix hashes
+        if: steps.bumped.outputs.any == 'true'
+        run: node scripts/update-hashes.mjs
+
+      - name: Commit and push
+        if: steps.bumped.outputs.any == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          git commit -m "release: ${{ steps.bumped.outputs.list }}"
+          git push
+
+      - name: Create GitHub releases
+        if: steps.bumped.outputs.any == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for tool_dir in tools/*/; do
+            pkg="$tool_dir/package.json"
+            [ -f "$pkg" ] || continue
+
+            binary=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$pkg','utf8')).toolbox?.binary || '')")
+            targets=$(node -e "console.log((JSON.parse(require('fs').readFileSync('$pkg','utf8')).toolbox?.targets || []).join(' '))")
+            version=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$pkg','utf8')).version)")
+
+            [ -z "$binary" ] && continue
+
+            tag="$binary@$version"
+
+            # Check if this tool was bumped
+            echo "${{ steps.bumped.outputs.list }}" | grep -q "$tag" || continue
+
+            # Collect binary files for this tool
+            files=""
+            for target in $targets; do
+              f="dist/$binary-$target"
+              [ -f "$f" ] && files="$files $f"
+            done
+
+            # Create tag and release
+            git tag "$tag" 2>/dev/null || true
+            git push origin "$tag" 2>/dev/null || true
+
+            if ! gh release view "$tag" >/dev/null 2>&1; then
+              gh release create "$tag" \
+                --title "$tag" \
+                --generate-notes \
+                $files
+            fi
+          done

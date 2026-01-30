@@ -1,0 +1,19 @@
+node_modules
+dist
+.DS_Store
+*.log
+.env
+.env.local
+
+# Local development data
+.dev/
+
+# Built binaries
+tools/voice-memos/voice-memos
+tools/transcribe-audio/transcribe-audio
+
+# Nix
+result
+
+# Temporary files
+tmp/

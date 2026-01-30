@@ -1,0 +1,30 @@
+{
+  "name": "@aliou/toolbox-transcribe-audio",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "transcribe-audio": "./index.ts"
+  },
+  "scripts": {
+    "dev": "bun run index.ts",
+    "start": "bun run index.ts",
+    "build": "bun build ./index.ts --compile --outfile transcribe-audio",
+    "test": "bun test"
+  },
+  "toolbox": {
+    "binary": "transcribe-audio",
+    "targets": [
+      "darwin-arm64",
+      "darwin-x64",
+      "linux-arm64",
+      "linux-x64"
+    ]
+  },
+  "dependencies": {
+    "@aliou/toolbox-cli": "workspace:*",
+    "picocolors": "catalog:default"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:default"
+  }
+}

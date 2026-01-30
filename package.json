@@ -1,0 +1,25 @@
+{
+  "name": "toolbox",
+  "private": true,
+  "workspaces": ["tools/*", "utils/*"],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "build": "bun run --filter '*' build",
+    "test": "bun test tools utils",
+    "lint": "bun run biome check tools utils",
+    "format": "bun run biome check --write tools utils",
+    "changeset": "changeset",
+    "version": "changeset version"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^2.3.7",
+    "@changesets/cli": "^2.27.11"
+  },
+  "catalogs": {
+    "default": {
+      "@clack/prompts": "^0.11.0",
+      "@types/bun": "latest",
+      "picocolors": "^1.1.1"
+    }
+  }
+}

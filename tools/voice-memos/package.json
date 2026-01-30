@@ -1,0 +1,29 @@
+{
+  "name": "@aliou/toolbox-voice-memos",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "voice-memos": "./index.ts"
+  },
+  "scripts": {
+    "dev": "bun run index.ts",
+    "start": "bun run index.ts",
+    "build": "bun build ./index.ts --compile --outfile voice-memos",
+    "test": "bun test"
+  },
+  "toolbox": {
+    "binary": "voice-memos",
+    "targets": [
+      "darwin-arm64",
+      "darwin-x64"
+    ]
+  },
+  "dependencies": {
+    "@aliou/toolbox-cli": "workspace:*",
+    "@clack/prompts": "catalog:default",
+    "picocolors": "catalog:default"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:default"
+  }
+}
